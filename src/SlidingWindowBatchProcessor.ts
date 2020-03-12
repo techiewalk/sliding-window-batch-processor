@@ -19,7 +19,6 @@ export class SlidingWindowBatchProcessor<T> {
 
     public push(task: T) {
         if(this.lock) {
-            console.error('lock set to true');
             blockAndExecuteOnConditonMet(() => this.lock === false, () => {
                 this.tasks.push(task);
                 this.slideTimer();
@@ -35,9 +34,7 @@ export class SlidingWindowBatchProcessor<T> {
         this.time = this.time ?  this.time + this.waitTimeinMs : Date.now();
         const delta = this.time - Date.now();
         if(delta > 0) {
-            console.error('Slide timer');
             this.timer = setTimeout(() => {
-                console.error('Timer expired processing messages');
                 this.timer = null;
                 this.lock = true;
                 this.callback(this.tasks, this.optionalArgs);
